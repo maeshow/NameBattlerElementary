@@ -9,3 +9,4 @@ bin/internal/domain/usecase/UpdatePlayerHitPointUseCase.class
 bin/internal/presentation/Messages.class
 bin/internal/presentation/NameBattlerController.class
 .vscode/settings.json
+bin/internal/domain/usecase/GenerateHashDigestUseCase.class

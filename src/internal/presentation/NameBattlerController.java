@@ -5,6 +5,7 @@ import java.util.List;
 
 import internal.domain.entity.Player;
 import internal.domain.usecase.CreatePlayerUseCase;
+import internal.domain.usecase.GenerateHashDigestUseCase;
 import internal.domain.usecase.GetAttackDamageUseCase;
 import internal.domain.usecase.GetIdForDisplayUseCase;
 import internal.domain.usecase.GetPlayerInputUseCase;
@@ -14,7 +15,8 @@ import internal.domain.usecase.UpdatePlayerHitPointUseCase;
 public class NameBattlerController {
     private static int FIRST_PLAYER_INDEX = 1;
     private static int PLAYER_NUMBER = 2;
-    private static int HP = 10;
+    private static int MAX_HP = 9;
+    private static int HP_INDEX = 0;
     private static int NOTHING_HP = 0;
 
     private final GetPlayerInputUseCase getPlayerInputUseCase;
@@ -23,6 +25,7 @@ public class NameBattlerController {
     private final IsEndGameUseCase isEndGameUseCase;
     private final GetAttackDamageUseCase getAttackDamageUseCase;
     private final UpdatePlayerHitPointUseCase updatePlayerHitPointUseCase;
+    private final GenerateHashDigestUseCase generateHashDigestUseCase;
 
     public NameBattlerController() {
         this.getPlayerInputUseCase = new GetPlayerInputUseCase();
@@ -31,6 +34,7 @@ public class NameBattlerController {
         this.isEndGameUseCase = new IsEndGameUseCase();
         this.getAttackDamageUseCase = new GetAttackDamageUseCase();
         this.updatePlayerHitPointUseCase = new UpdatePlayerHitPointUseCase();
+        this.generateHashDigestUseCase = new GenerateHashDigestUseCase();
     }
 
     public void startGame() {
@@ -50,7 +54,8 @@ public class NameBattlerController {
         String id = getIdForDisplayUseCase.invoke(index);
         Messages.showFormattedMessage(Messages.WAITING_INPUT_NAME, id);
         String name = getPlayerInputUseCase.invoke();
-        return createPlayerUseCase.invoke(index, name, HP);
+        int hitPoint = generateHashDigestUseCase.invoke(name, HP_INDEX) % MAX_HP;
+        return createPlayerUseCase.invoke(index, name, hitPoint);
     }
 
     private void startTurn(List<Player> players) {
