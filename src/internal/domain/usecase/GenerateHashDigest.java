@@ -3,8 +3,8 @@ package internal.domain.usecase;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
-public class GenerateHashDigestUseCase {
-    public int invoke(String name, int index) {
+public class GenerateHashDigest {
+    public int generateNumber(String name, int index) {
         try {
             String digest = getHashDigest(name);
             String hex = digest.substring(

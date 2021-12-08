@@ -10,3 +10,9 @@ bin/internal/presentation/Messages.class
 bin/internal/presentation/NameBattlerController.class
 .vscode/settings.json
 bin/internal/domain/usecase/GenerateHashDigestUseCase.class
+bin/internal/App.class
+bin/internal/domain/entity/Status.class
+bin/internal/domain/usecase/GenerateHashDigest.class
+bin/internal/domain/usecase/OperationPlayer.class
+bin/internal/domain/usecase/OperationStatus.class
+bin/internal/presentation/BattleField.class

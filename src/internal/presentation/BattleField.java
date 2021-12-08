@@ -2,39 +2,31 @@ package internal.presentation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import internal.domain.entity.Player;
-import internal.domain.usecase.CreatePlayerUseCase;
-import internal.domain.usecase.GenerateHashDigestUseCase;
-import internal.domain.usecase.GetAttackDamageUseCase;
-import internal.domain.usecase.GetIdForDisplayUseCase;
-import internal.domain.usecase.GetPlayerInputUseCase;
-import internal.domain.usecase.IsEndGameUseCase;
-import internal.domain.usecase.UpdatePlayerHitPointUseCase;
+import internal.domain.entity.Status;
+import internal.domain.usecase.GenerateHashDigest;
+import internal.domain.usecase.OperationPlayer;
+import internal.domain.usecase.OperationStatus;
 
-public class NameBattlerController {
+public class BattleField {
+    private static final Scanner STDIN = new Scanner(System.in);
+
     private static int FIRST_PLAYER_INDEX = 1;
     private static int PLAYER_NUMBER = 2;
     private static int MAX_HP = 9;
     private static int HP_INDEX = 0;
     private static int NOTHING_HP = 0;
 
-    private final GetPlayerInputUseCase getPlayerInputUseCase;
-    private final GetIdForDisplayUseCase getIdForDisplayUseCase;
-    private final CreatePlayerUseCase createPlayerUseCase;
-    private final IsEndGameUseCase isEndGameUseCase;
-    private final GetAttackDamageUseCase getAttackDamageUseCase;
-    private final UpdatePlayerHitPointUseCase updatePlayerHitPointUseCase;
-    private final GenerateHashDigestUseCase generateHashDigestUseCase;
+    private final OperationPlayer operationPlayer;
+    private final OperationStatus operationStatus;
+    private final GenerateHashDigest generateHashDigest;
 
-    public NameBattlerController() {
-        this.getPlayerInputUseCase = new GetPlayerInputUseCase();
-        this.getIdForDisplayUseCase = new GetIdForDisplayUseCase();
-        this.createPlayerUseCase = new CreatePlayerUseCase();
-        this.isEndGameUseCase = new IsEndGameUseCase();
-        this.getAttackDamageUseCase = new GetAttackDamageUseCase();
-        this.updatePlayerHitPointUseCase = new UpdatePlayerHitPointUseCase();
-        this.generateHashDigestUseCase = new GenerateHashDigestUseCase();
+    public BattleField() {
+        this.operationPlayer = new OperationPlayer();
+        this.operationStatus = new OperationStatus();
+        this.generateHashDigest = new GenerateHashDigest();
     }
 
     public void startGame() {
@@ -51,17 +43,17 @@ public class NameBattlerController {
     }
 
     private Player generatePlayer(int index) {
-        String id = getIdForDisplayUseCase.invoke(index);
+        String id = operationPlayer.getDisplayId(index);
         Messages.showFormattedMessage(Messages.WAITING_INPUT_NAME, id);
-        String name = getPlayerInputUseCase.invoke();
-        int hitPoint = generateHashDigestUseCase.invoke(name, HP_INDEX) % MAX_HP;
-        return createPlayerUseCase.invoke(index, name, hitPoint);
+        String name = STDIN.next();
+        int hitPoint = generateHashDigest.generateNumber(name, HP_INDEX) % MAX_HP;
+        return new Player(index, name, new Status(hitPoint));
     }
 
     private void startTurn(List<Player> players) {
         Messages.showNewLine();
         Messages.showWithNewLine(Messages.BATTLE_START);
-        while (!isEndGameUseCase.invoke(players)) {
+        while (!isEndGame(players)) {
             for (int i = 0; i < PLAYER_NUMBER; i++) {
                 Player firstPlayer = players.get(i);
                 Player secondPlayer;
@@ -84,20 +76,29 @@ public class NameBattlerController {
 
     private void attackEnemy(Player myself, Player enemy) {
         Messages.showFormattedMessage(Messages.ATTACK, myself.getName());
-        int attackDamage = getAttackDamageUseCase.invoke();
+        int attackDamage = operationStatus.getAttackDamage();
         Messages.showFormattedMessage(Messages.DAMAGE, enemy.getName(), attackDamage);
-        updatePlayerHitPointUseCase.invoke(enemy, attackDamage);
+        operationStatus.removeHitPoint(enemy, attackDamage);
     }
 
     private boolean isOutOfPower(Player player) {
-        return player.getHitPoint() <= NOTHING_HP;
+        return player.getStatus().getHitPoint() <= NOTHING_HP;
+    }
+
+    private boolean isEndGame(List<Player> players) {
+        boolean isOutOfPower = false;
+        for (Player player : players) {
+            isOutOfPower = isOutOfPower || player.getStatus().getHitPoint() <= NOTHING_HP;
+        }
+        return isOutOfPower;
     }
 
     private void showCurrentInfo(List<Player> players) {
         Messages.showWithNewLine(Messages.NEXT_TURN);
         for (Player player : players) {
-            String id = getIdForDisplayUseCase.invoke(player.getId());
-            Messages.showFormattedMessage(Messages.CURRENT_INFO, id, player.getName(), player.getHitPoint());
+            String id = operationPlayer.getDisplayId(player.getId());
+            Messages.showFormattedMessage(Messages.CURRENT_INFO, id, player.getName(),
+                    player.getStatus().getHitPoint());
         }
         Messages.showNewLine();
         Messages.showWithNewLine(Messages.LINE);
