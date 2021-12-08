@@ -7,7 +7,8 @@ import internal.domain.entity.Status;
 
 public class OperationStatus {
     private static final Random RANDOM = new Random();
-    private static final int MAX_DAMAGE = 3;
+
+    private static int PREVENT_ZERO = 1;
 
     public void removeHitPoint(Player player, int damage) {
         Status status = player.getStatus();
@@ -15,7 +16,7 @@ public class OperationStatus {
         status.setHitPoint(newHitPoint);
     }
 
-    public int getAttackDamage() {
-        return RANDOM.nextInt(MAX_DAMAGE) + 1;
+    public int getAttackDamage(int strength) {
+        return RANDOM.nextInt(strength) + PREVENT_ZERO;
     }
 }

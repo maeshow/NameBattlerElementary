@@ -16,8 +16,11 @@ public class BattleField {
     private static int FIRST_PLAYER_INDEX = 1;
     private static int PLAYER_NUMBER = 2;
     private static int MAX_HP = 9;
+    private static int MAX_STR = 5;
     private static int HP_INDEX = 0;
+    private static int STR_INDEX = 1;
     private static int NOTHING_HP = 0;
+    private static int PREVENT_ZERO = 1;
 
     private final OperationPlayer operationPlayer;
     private final OperationStatus operationStatus;
@@ -46,8 +49,9 @@ public class BattleField {
         String id = operationPlayer.getDisplayId(index);
         Messages.showFormattedMessage(Messages.WAITING_INPUT_NAME, id);
         String name = STDIN.next();
-        int hitPoint = generateHashDigest.generateNumber(name, HP_INDEX) % MAX_HP;
-        return new Player(index, name, new Status(hitPoint));
+        int hitPoint = generateHashDigest.generateNumber(name, HP_INDEX) % MAX_HP + PREVENT_ZERO;
+        int strength = generateHashDigest.generateNumber(name, STR_INDEX) % MAX_STR + PREVENT_ZERO;
+        return new Player(index, name, new Status(hitPoint, strength));
     }
 
     private void startTurn(List<Player> players) {
@@ -76,7 +80,7 @@ public class BattleField {
 
     private void attackEnemy(Player myself, Player enemy) {
         Messages.showFormattedMessage(Messages.ATTACK, myself.getName());
-        int attackDamage = operationStatus.getAttackDamage();
+        int attackDamage = operationStatus.getAttackDamage(myself.getStatus().getStrength());
         Messages.showFormattedMessage(Messages.DAMAGE, enemy.getName(), attackDamage);
         operationStatus.removeHitPoint(enemy, attackDamage);
     }
