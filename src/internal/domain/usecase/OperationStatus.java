@@ -16,7 +16,8 @@ public class OperationStatus {
         status.setHitPoint(newHitPoint);
     }
 
-    public int getAttackDamage(int strength) {
-        return RANDOM.nextInt(strength) + PREVENT_ZERO;
+    public int getAttackDamage(int strength, int defense) {
+        int result = strength - defense;
+        return Math.max(result, 0);
     }
 }

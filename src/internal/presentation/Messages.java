@@ -9,6 +9,7 @@ public class Messages {
 
     public static final String ATTACK = "%sの攻撃！%n";
     public static final String DAMAGE = "%sに %d のダメージ！%n";
+    public static final String NO_DAMAGE = "攻撃がミス";
     public static final String OUT_OF_POWER = "%sは力尽きた...%n";
 
     public static final String CURRENT_INFO = "%s：%s(HP %d)%n";

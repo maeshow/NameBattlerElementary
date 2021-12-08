@@ -15,12 +15,15 @@ public class BattleField {
 
     private static int FIRST_PLAYER_INDEX = 1;
     private static int PLAYER_NUMBER = 2;
-    private static int MAX_HP = 9;
+    private static int MAX_HP = 100;
     private static int MAX_STR = 5;
+    private static int MAX_DEF = 3;
     private static int HP_INDEX = 0;
     private static int STR_INDEX = 1;
+    private static int DEF_INDEX = 2;
     private static int NOTHING_HP = 0;
     private static int PREVENT_ZERO = 1;
+    private static int NO_DAMAGE = 0;
 
     private final OperationPlayer operationPlayer;
     private final OperationStatus operationStatus;
@@ -51,7 +54,8 @@ public class BattleField {
         String name = STDIN.next();
         int hitPoint = generateHashDigest.generateNumber(name, HP_INDEX) % MAX_HP + PREVENT_ZERO;
         int strength = generateHashDigest.generateNumber(name, STR_INDEX) % MAX_STR + PREVENT_ZERO;
-        return new Player(index, name, new Status(hitPoint, strength));
+        int defense = generateHashDigest.generateNumber(name, DEF_INDEX) % MAX_DEF;
+        return new Player(index, name, new Status(hitPoint, strength, defense));
     }
 
     private void startTurn(List<Player> players) {
@@ -80,9 +84,18 @@ public class BattleField {
 
     private void attackEnemy(Player myself, Player enemy) {
         Messages.showFormattedMessage(Messages.ATTACK, myself.getName());
-        int attackDamage = operationStatus.getAttackDamage(myself.getStatus().getStrength());
+        Status status = myself.getStatus();
+        int attackDamage = operationStatus.getAttackDamage(status.getStrength(), status.getDefense());
+        if (isNoDamage(attackDamage)) {
+            Messages.showWithNewLine(Messages.NO_DAMAGE);
+            return;
+        }
         Messages.showFormattedMessage(Messages.DAMAGE, enemy.getName(), attackDamage);
         operationStatus.removeHitPoint(enemy, attackDamage);
+    }
+
+    private boolean isNoDamage(int damage) {
+        return damage <= NO_DAMAGE;
     }
 
     private boolean isOutOfPower(Player player) {

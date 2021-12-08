@@ -3,17 +3,18 @@ package internal.domain.entity;
 public class Status {
     private int hitPoint;
     private int strenth;
-    // private int defense;
+    private int defense;
     // private int luck;
 
     public Status(
             int hitPoint,
-            int strength
-    // int defense,
+            int strength,
+            int defense
     // int luck
     ) {
         this.hitPoint = hitPoint;
         this.strenth = strength;
+        this.defense = defense;
     }
 
     public void setHitPoint(int hitPoint) {
@@ -30,5 +31,13 @@ public class Status {
 
     public void setStrength(int strength) {
         this.strenth = strength;
+    }
+
+    public int getDefense() {
+        return this.defense;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
     }
 }
