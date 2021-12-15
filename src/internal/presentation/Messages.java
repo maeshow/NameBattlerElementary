@@ -15,6 +15,8 @@ public class Messages {
     public static final String CURRENT_INFO = "%s：%s(HP %d)%n";
     public static final String WIN = "%sの勝利！！%n";
 
+    public static final String INITIAL_INFO = "%s: HP(%d), STR(%d), DEF(%d), LUCK(%d)%n";
+
     public static void showWithNewLine(String message) {
         System.out.println(message);
     }
@@ -41,5 +43,9 @@ public class Messages {
 
     public static void showFormattedMessage(String message, String a, String b, int c) {
         System.out.format(message, a, b, c);
+    }
+
+    public static void showFormattedMessage(String message, String a, int b, int c, int d, int e) {
+        System.out.format(message, a, b, c, d, e);
     }
 }

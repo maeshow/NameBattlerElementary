@@ -16,11 +16,13 @@ public class BattleField {
     private static int FIRST_PLAYER_INDEX = 1;
     private static int PLAYER_NUMBER = 2;
     private static int MAX_HP = 100;
-    private static int MAX_STR = 5;
-    private static int MAX_DEF = 3;
+    private static int MAX_STR = 10;
+    private static int MAX_DEF = 10;
+    private static int MAX_LUCK = 10;
     private static int HP_INDEX = 0;
     private static int STR_INDEX = 1;
     private static int DEF_INDEX = 2;
+    private static int LUCK_INDEX = 3;
     private static int NOTHING_HP = 0;
     private static int PREVENT_ZERO = 1;
     private static int NO_DAMAGE = 0;
@@ -55,10 +57,13 @@ public class BattleField {
         int hitPoint = generateHashDigest.generateNumber(name, HP_INDEX) % MAX_HP + PREVENT_ZERO;
         int strength = generateHashDigest.generateNumber(name, STR_INDEX) % MAX_STR + PREVENT_ZERO;
         int defense = generateHashDigest.generateNumber(name, DEF_INDEX) % MAX_DEF;
-        return new Player(index, name, new Status(hitPoint, strength, defense));
+        int luck = generateHashDigest.generateNumber(name, LUCK_INDEX) % MAX_LUCK;
+        return new Player(index, name, new Status(hitPoint, strength, defense, luck));
     }
 
     private void startTurn(List<Player> players) {
+        Messages.showNewLine();
+        showInitialInfo(players);
         Messages.showNewLine();
         Messages.showWithNewLine(Messages.BATTLE_START);
         while (!isEndGame(players)) {
@@ -84,8 +89,10 @@ public class BattleField {
 
     private void attackEnemy(Player myself, Player enemy) {
         Messages.showFormattedMessage(Messages.ATTACK, myself.getName());
-        Status status = myself.getStatus();
-        int attackDamage = operationStatus.getAttackDamage(status.getStrength(), status.getDefense());
+        Status myStatus = myself.getStatus();
+        Status enemyStatus = enemy.getStatus();
+        int attackDamage = operationStatus.getAttackDamage(myStatus.getStrength(), enemyStatus.getDefense(),
+                myStatus.getLuck());
         if (isNoDamage(attackDamage)) {
             Messages.showWithNewLine(Messages.NO_DAMAGE);
             return;
@@ -120,5 +127,18 @@ public class BattleField {
         Messages.showNewLine();
         Messages.showWithNewLine(Messages.LINE);
         Messages.showNewLine();
+    }
+
+    private void showInitialInfo(List<Player> players) {
+        for (Player player : players) {
+            Status status = player.getStatus();
+            Messages.showFormattedMessage(
+                    Messages.INITIAL_INFO,
+                    player.getName(),
+                    status.getHitPoint(),
+                    status.getStrength(),
+                    status.getDefense(),
+                    status.getLuck());
+        }
     }
 }

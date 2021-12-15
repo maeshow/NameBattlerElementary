@@ -4,7 +4,7 @@ import internal.presentation.BattleField;
 
 public class App {
     public static void main(String[] args) {
-        BattleField controller = new BattleField();
-        controller.startGame();
+        BattleField field = new BattleField();
+        field.startGame();
     }
 }
